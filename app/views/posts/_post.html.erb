@@ -1,0 +1,56 @@
+<div>
+  <h2>Post Title:</h2> <h1><%= @post.title %></h1><br/>
+  <h3>Post Content:  <%= @post.content %></h3><br/>
+  
+  <h3>Categories:</h3>
+  <ul>
+  <% @post.categories.each do |category| %>
+   <li> <%= category.name %></li><br>
+  <% end %>
+  </ul>
+
+  
+
+  <h3>Unique Commenters:</h3>
+  <ul>
+  <% @post.unique_users.each do |user|%>
+    <li><%= link_to user.username, user%></li><br>
+    <h3>User Comments:</h3>
+    <% @post.comments.each do |comment| %>
+   <li> <%= comment.user.username %> says:
+    <%= link_to comment.content, comment %></li><br>
+    <%end%> 
+  <%end%>
+  </ul>
+</div>
+
+<div class="btn-group">
+  <%= link_to 'Show', post_path(@post), class: 'btn btn-primary' %> 
+  <%= link_to 'Edit', edit_post_path(@post), class: 'btn btn-secondary' %>
+  <%= link_to 'Destroy', post_path(@post), class: 'btn btn-danger',
+    data: {method: :delete, confirm: 'Are you sure?'} %>
+</div>
+
+
+
+<div>
+<%=form_for @post.comments.build do |f|%>
+<%= f.label "Content"%>
+<%= f.text_area :content%>
+
+
+<%= f.fields_for :user, @post.users.build do |user_builder|%>
+<%= user_builder.label "Add New User" %>
+<%= user_builder.text_field :username %>
+<br>
+
+<%= f.label "existing user"%>
+<%= f.collection_select :user_id, User.all, :id, :username, include_blank: true %>
+<%= f.hidden_field :post_id, :value => @post.id%>
+
+<%end%>
+<%= f.submit%>
+<%end%>
+
+</div>
+
